@@ -25,7 +25,6 @@ def get_write_year(year):
             write_year = "года"
     return write_year
 
-
 def get_year():
     now = datetime.datetime.now()
     year = now.year - 2010
