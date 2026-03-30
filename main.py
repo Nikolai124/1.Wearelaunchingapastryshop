@@ -35,7 +35,7 @@ def get_year():
 
 def main(): 
     parser = argparse.ArgumentParser(description='загружает данные на сайт')
-    parser.add_argument('xlsx_file', type=str, help='введите название своего xlsx файла')
+    parser.add_argument('--xlsx_file', type=str, help='введите название своего xlsx файла', default='cakes.xlsx')
     args = parser.parse_args()
     cakes = pandas.read_excel(args.xlsx_file, na_values=['N/A', 'NA'], keep_default_na=False).to_dict('records')
     cakes_collection = collections.defaultdict(list)
