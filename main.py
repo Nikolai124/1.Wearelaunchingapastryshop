@@ -1,6 +1,7 @@
 import datetime
 import pandas
 import collections
+import argparse
 
 
 from pprint import pprint
@@ -25,6 +26,7 @@ def get_write_year(year):
             write_year = "года"
     return write_year
 
+
 def get_year():
     now = datetime.datetime.now()
     year = now.year - 2010
@@ -32,11 +34,13 @@ def get_year():
 
 
 def main(): 
-    cakes = pandas.read_excel('cakes3.xlsx', na_values=['N/A', 'NA'], keep_default_na=False).to_dict('records')
+    parser = argparse.ArgumentParser(description='загружает данные на сайт')
+    parser.add_argument('xlsx_file', type=str, help='введите название своего xlsx файла')
+    args = parser.parse_args()
+    cakes = pandas.read_excel(args.xlsx_file, na_values=['N/A', 'NA'], keep_default_na=False).to_dict('records')
     cakes_collection = collections.defaultdict(list)
     for cake in cakes:
         cakes_collection[cake['Категория']].append(cake)
-    print(cakes_collection)
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
@@ -45,14 +49,17 @@ def main():
     year = get_year()
     write_year = get_write_year(year)
     rendered_page = template.render(
-    year=year,
-    write_year=write_year,
-    cakes=cakes_collection
+        year=year,
+        write_year=write_year,
+        cakes=cakes_collection
     )
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
     server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
     server.serve_forever()
+
+
+
 
 if __name__ == "__main__":
     main()
